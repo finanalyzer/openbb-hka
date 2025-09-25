@@ -6,7 +6,9 @@ Prior to this project, I released OpenBB extensions for AKShare and Tushare data
 
 Another frequent point of confusion is whether OpenBB has a front-end interface and how to use it. OpenBB Workspace is, in fact, the front-end platform. It allows users to build customized data analysis dashboards. For specific markets such as A-shares and H-shares, we can develop dedicated OpenBB Workspace applications with tailored analytical components — openbb-hka is one such application designed for building dashboards for A-share and H-share analysis.
 
-## Comparison Between OpenBB Workspace Apps and Dashboards
+If you wish to build an analysis dashboard from scratch, you can use OpenBB Platform as the backend. After installing OpenBB Platform, you can start your own backend by running the `openbb-api`command.
+
+The table below compares the key characteristics of OpenBB Workspace Applications versus Dashboards:
 
 | **Apps**                                          | **Dashboards**                    |
 | ------------------------------------------------------- | --------------------------------------- |
@@ -16,6 +18,8 @@ Another frequent point of confusion is whether OpenBB has a front-end interface 
 | Designed by domain experts for specific workflows       | General-purpose analytical workspace    |
 
 ## Environment Setup
+
+Before running `openbb-hka` as a backend application, you need to configure the required data source API keys and environment variables.
 
 ### API Key Setup
 
@@ -90,7 +94,7 @@ docker compose up
 
 openbb-hka can also be run using Google Firebase Studio.
 
-<a href="https://idx.google.com/new?template=https://github.com/finanalyzer/openbb-hka/tree/master/docs">
+<a href="https://idx.google.com/new?template=https://github.com/finanalyzer/idx/tree/main/hka">
   <picture>
     <source
       media="(prefers-color-scheme: dark)"
@@ -109,24 +113,35 @@ openbb-hka can also be run using Google Firebase Studio.
 
 You can run openbb-hka either locally or deploy it to a cloud environment. Once the application is running, you can add it to your OpenBB Workspace.
 
-![image01](docs/images/openbb_hka01.png)
+![image01](https://raw.githubusercontent.com/finanalyzer/openbb-hka/refs/heads/master/docs/images/openbb_hka01.png)
 
 As shown in the image above, click the "Connect Backend" button to add the application. After successful addition, two new applications—"A-Shares" and "H-Shares"—will appear in your workspace.
 
 Click on the "A-Shares" application to access the analysis dashboard shown below:
 
-![image02](docs/images/openbb_hka02.png)
+![image02](https://raw.githubusercontent.com/finanalyzer/openbb-hka/master/docs/images/openbb_hka02.png)
 
 The current interface includes three main sections: **Profile**, **Financials**, and **Stock Price**. You can customize your own analysis dashboard by adding, removing, or adjusting widgets according to your preferences.
 
 Below is a screenshot of the financial analysis panel:
 
-![image03](docs/images/openbb_hka03.png)
+![image03](https://raw.githubusercontent.com/finanalyzer/openbb-hka/refs/heads/master/docs/images/openbb_hka03.png)
 
 The following image shows the historical stock price query interface:
 
-![image04](docs/images/openbb_hka04.png)
+![image04](https://raw.githubusercontent.com/finanalyzer/openbb-hka/refs/heads/master/docs/images/openbb_hka04.png)
 
 ## AI Integration
 
 All widgets in OpenBB Workspace can be added to the Copilot panel on the right for AI-powered analysis. The OpenBB Copilot is also extensible—you can integrate commonly used AI tools into the platform. This functionality will be further enhanced in upcoming releases.
+
+## Summary
+
+Both the components and the Copilot feature of OpenBB Workspace support deep customization based on user needs, allowing personalized extensions through the development of OpenBB Workspace applications.
+
+OpenBB offers the following application development templates for reference:
+
+* Backend Data Integration Template ([backends-for-openbb]([backends-for-openbb](https://github.com/OpenBB-finance/backends-for-openbb)))
+* Custom Agent Template ([agents-for-openbb]([agents-for-openbb](https://github.com/OpenBB-finance/agents-for-openbb)))
+
+Currently, the `openbb-hka` project has completed initial development based on the backends-for-openbb template. The next step involves advancing the localization of the Copilot functionality. Once implemented, users in China will be able to seamlessly integrate local AI tools such as Qianwen and Doubao within OpenBB Workspace, significantly enhancing both user experience and operational efficiency.
