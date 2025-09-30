@@ -1,6 +1,6 @@
 [project]
 name = "openbb-hka"
-version = "0.2.6"
+version = "0.3.1"
 description = "Dashboard for your financial data in China and Hong Kong market"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -15,6 +15,10 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "requests>=2.32.4",
     "uvicorn>=0.34.2",
+    "openbb-ai>=1.7.5",
+    "sse-starlette>=3.0.2",
+    "openai>=1.109.1",
+    "magentic>=0.40.0",
 ]
 
 [dependency-groups]

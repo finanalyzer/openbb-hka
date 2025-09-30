@@ -79,3 +79,35 @@ def add_template(template_name: str):
     except Exception as e:
         print(f"Error loading template {template_name}: {e}")
         return False
+
+
+def load_agent_config(template_name: str = "agents"):
+    """
+    Function that loads the agent configuration from a JSON file in the templates directory.
+    
+    Args:
+        template_name (str): The name of the template file (without .json 
+            extension)
+    
+    Returns:
+        str: JSON string containing the agent configuration
+    """
+    template_path = os.path.join(Path(__file__).parent.parent.resolve(), "templates", f"{template_name}.json")
+    
+    # Check if file exists
+    if not os.path.exists(template_path):
+        print(f"Template file not found: {template_path}")
+        return False
+    
+    # Check if JSON is valid
+    try:
+        with open(template_path, 'r') as f:
+            template_data = json.load(f)
+            # Register the template in the TEMPLATES dictionary
+            return template_data
+    except json.JSONDecodeError as e:
+        print(f"Invalid JSON in template {template_name}: {e}")
+        return False
+    except Exception as e:
+        print(f"Error loading template {template_name}: {e}")
+        return False

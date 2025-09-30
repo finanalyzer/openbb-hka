@@ -1,20 +1,12 @@
-import json
-from pathlib import Path
-from importlib.metadata import version
-from fastapi import FastAPI, HTTPException, Request, status, Query, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordBearer
-from dotenv import load_dotenv
-from functools import wraps
-import asyncio
-from fastapi.websockets import WebSocketState
-from core.registry import register_widget, WIDGETS, add_template, TEMPLATES
+from core.registry import register_widget, WIDGETS, add_template, TEMPLATES, load_agent_config
 from core.config import config
-from core.auth import get_current_user
 from routes.charts import charts_router
 from routes.equity_cn import equity_cn_router
 from routes.equity_hk import equity_hk_router
+from routes.agents import agents_router
 import logging
 from mysharelib.tools import setup_logger
 
@@ -64,6 +56,16 @@ app.include_router(
 )
 add_template("hk")
 
+app.include_router(
+    agents_router,
+    prefix="/a",
+)
+
+@app.get("/agents.json")
+def get_agents_config():
+    """Agents configuration file for the OpenBB Workspace"""
+    return JSONResponse(load_agent_config())
+
 # Apps configuration file for the OpenBB Workspace
 # it contains the information and configuration about all the
 # apps that will be displayed in the OpenBB Workspace
@@ -94,204 +96,3 @@ def get_widgets():
     """
     return WIDGETS
 
-
-# Add back the endpoint to get available tickers
-@app.get("/earnings_press_releases/tickers")
-async def get_tickers(token: str = Depends(get_current_user)):
-    """Get available tickers for earnings press releases"""
-    return {}
-
-@register_widget({
-    "name": "Earnings Press Releases",
-    "description": "Get earnings-related press releases for companies, including URL, publish date, and full text.",
-    "category": "Equity",
-    "subcategory": "Earnings",
-    "type": "markdown",
-    "widgetId": "earnings_press_releases",
-    "endpoint": "earnings_press_releases",
-    "gridData": {
-        "w": 40,
-        "h": 8
-    },
-    "params": [
-        {
-            "type": "endpoint",
-            "paramName": "ticker",
-            "label": "Symbol",
-            "value": "600325",
-            "description": "Company ticker to get earnings press releases for",
-            "multiSelect": False,
-            "optionsEndpoint": "/cn/tickers"
-        }
-    ]
-})
-@app.get("/earnings_press_releases")
-async def get_earnings_press_releases(ticker: str = Query(..., description="Company ticker"), 
-                                      token: str = Depends(get_current_user)):
-    """Get earnings press releases for a company"""
-    return {}
-
-@register_widget({
-    "name": "Insider Trades",
-    "description": "Get insider trading activity for stocks, including transaction details, shares traded, and transaction values.",
-    "category": "Equity",
-    "subcategory": "Trading",
-    "type": "table",
-    "widgetId": "insider_trades",
-    "endpoint": "insider_trades",
-    "gridData": {
-        "w": 40,
-        "h": 8
-    },
-    "data": {
-        "table": {
-            "showAll": True,
-            "columnsDefs": [
-                {"field": "transaction_date", "headerName": "Date", "width": 180, "cellDataType": "text", "pinned": "left"},
-                {"field": "insider_name", "headerName": "Insider", "width": 200, "cellDataType": "text"},
-                {"field": "transaction_type", "headerName": "Type", "width": 120, "cellDataType": "text"},
-                {"field": "shares", "headerName": "Shares", "width": 120, "cellDataType": "number"},
-                {"field": "price", "headerName": "Price", "width": 120, "cellDataType": "number"},
-                {"field": "value", "headerName": "Value", "width": 150, "cellDataType": "number"},
-                {"field": "ownership_type", "headerName": "Ownership", "width": 150, "cellDataType": "text"}
-            ]
-        }
-    },
-    "params": [
-        {
-            "type": "endpoint",
-            "paramName": "ticker",
-            "label": "Symbol",
-            "value": "600325",
-            "description": "Stock ticker to get insider trades for (Free tier: AAPL, MSFT, TSLA)",
-            "optionsEndpoint": "/cn/tickers"
-        },
-        {
-            "type": "number",
-            "paramName": "limit",
-            "label": "Number of Trades",
-            "value": "50",
-            "description": "Maximum number of insider trades to display"
-        }
-    ]
-})
-
-@app.get("/insider_trades")
-async def get_insider_trades(ticker: str = Query(..., description="Stock ticker"), 
-                             limit: int = 50, 
-                             token: str = Depends(get_current_user)):
-    """Get insider trading activity for a stock"""
-    return {}
-
-@app.get("/institutional_investors")
-async def get_institutional_investors(token: str = Depends(get_current_user)):
-    """Get list of available institutional investors"""
-    return {}
-
-@register_widget({
-    "name": "Institutional Ownership by Investor",
-    "description": "Get institutional ownership data showing holdings of major investors like Berkshire Hathaway, BlackRock, and Vanguard.",
-    "category": "Equity",
-    "subcategory": "Ownership",
-    "type": "table",
-    "widgetId": "institutional_ownership_by_investor",
-    "endpoint": "institutional_ownership_by_investor",
-    "gridData": {
-        "w": 40,
-        "h": 8
-    },
-    "data": {
-        "table": {
-            "showAll": True,
-            "columnsDefs": [
-                {"field": "ticker", "headerName": "Symbol", "width": 120, "cellDataType": "text", "pinned": "left"},
-                {"field": "company_name", "headerName": "Company", "width": 200, "cellDataType": "text"},
-                {"field": "shares", "headerName": "Shares", "width": 150, "cellDataType": "number"},
-                {"field": "value", "headerName": "Value", "width": 150, "cellDataType": "number"},
-                {"field": "weight", "headerName": "Weight %", "width": 120, "cellDataType": "number"},
-                {"field": "report_date", "headerName": "Report Date", "width": 180, "cellDataType": "text"}
-            ]
-        }
-    },
-    "params": [
-        {
-            "type": "endpoint",
-            "paramName": "investor",
-            "label": "Investor",
-            "value": "BERKSHIRE_HATHAWAY_INC",
-            "description": "Institutional investor name",
-            "optionsEndpoint": "/institutional_investors",
-            "style": {
-                "popupWidth": 450
-            }
-        },
-        {
-            "type": "number",
-            "paramName": "limit",
-            "label": "Number of Holdings",
-            "value": "100",
-            "description": "Maximum number of holdings to display"
-        }
-    ]
-})
-
-@app.get("/institutional_ownership_by_investor")
-async def get_institutional_ownership_by_investor(
-    investor: str = Query(..., description="Institutional investor name"),
-    limit: int = 100, 
-    token: str = Depends(get_current_user)
-):
-    """Get institutional ownership data for an investor"""
-    return {}
-
-@register_widget({
-    "name": "Institutional Ownership by Ticker",
-    "description": "Get institutional ownership data showing which institutions hold a specific stock.",
-    "category": "Equity",
-    "subcategory": "Ownership",
-    "type": "table",
-    "widgetId": "institutional_ownership_by_ticker",
-    "endpoint": "institutional_ownership_by_ticker",
-    "gridData": {
-        "w": 40,
-        "h": 8
-    },
-    "data": {
-        "table": {
-            "showAll": True,
-            "columnsDefs": [
-                {"field": "investor", "headerName": "Investor", "width": 250, "cellDataType": "text", "pinned": "left"},
-                {"field": "shares", "headerName": "Shares", "width": 150, "cellDataType": "number"},
-                {"field": "value", "headerName": "Value", "width": 150, "cellDataType": "number"},
-                {"field": "weight", "headerName": "Weight %", "width": 120, "cellDataType": "number"},
-                {"field": "report_date", "headerName": "Report Date", "width": 180, "cellDataType": "text"}
-            ]
-        }
-    },
-    "params": [
-        {
-            "type": "endpoint",
-            "paramName": "ticker",
-            "label": "Symbol",
-            "value": "600325",
-            "description": "Stock ticker to get institutional ownership for (Free tier: AAPL, MSFT, TSLA)",
-            "optionsEndpoint": "/cn/tickers"
-        },
-        {
-            "type": "number",
-            "paramName": "limit",
-            "label": "Number of Holdings",
-            "value": "100",
-            "description": "Maximum number of institutional holders to display"
-        }
-    ]
-})
-
-@app.get("/institutional_ownership_by_ticker")
-async def get_institutional_ownership_by_ticker(
-    ticker: str = Query(..., description="Stock ticker"),
-    limit: int = 100, 
-    token: str = Depends(get_current_user)
-):
-    """Get institutional ownership data for a stock"""
-    return {}
