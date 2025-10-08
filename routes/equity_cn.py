@@ -524,32 +524,7 @@ async def get_candles_cn(
 
 @equity_cn_router.get("/tickers")
 def get_cn_tickers(token: str = Depends(get_current_user)):
-    """Get available stock tickers for free tier"""
-    return [
-        {"label": "华发股份", "value": "600325"},
-        {"label": "中国石化", "value": "600028"},
-        {"label": "招商银行", "value": "600036"},
-        {"label": "招商蛇口", "value": "001979"},
-        {"label": "美的集团", "value": "000333"},
-        {"label": "中远海控", "value": "601919"},
-        {"label": "中国石油", "value": "601857"},
-        {"label": "招商蛇口", "value": "001979"},
-        {"label": "中国联通", "value": "600050"},
-        {"label": "中国移动", "value": "600941"},
-        {"label": "中国电信", "value": "601728"},
-        {"label": "中国人保", "value": "601319"},
-        {"label": "大秦铁路", "value": "601006"},
-        {"label": "物产中大", "value": "600704"},
-        {"label": "国投电力", "value": "600886"},
-        {"label": "辽港股份", "value": "601880"},
-        {"label": "中信银行", "value": "601998"},
-        {"label": "招商证券", "value": "600999"},
-        {"label": "平安银行", "value": "000001"},
-        {"label": "中国平安", "value": "601318"},
-        {"label": "农业银行", "value": "601288"},
-        {"label": "中国银行", "value": "601988"},
-        {"label": "建设银行", "value": "601939"},
-        {"label": "工商银行", "value": "601398"},
-        {"label": "保利发展", "value": "600048"}
-    ]
+    """Get available stock tickers for A-share market"""
+    from fin_data.profile import get_tickers
+    return get_tickers()
 

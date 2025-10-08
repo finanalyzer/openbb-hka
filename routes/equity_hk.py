@@ -83,24 +83,8 @@ async def get_candles_hk(
 @equity_hk_router.get("/tickers")
 def get_stock_tickers(token: str = Depends(get_current_user)):
     """Get available stock tickers for Hong Kong market"""
-    return [
-        {"label": "美的集团", "value": "00300"},
-        {"label": "中国人民", "value": "01339"},
-        {"label": "招商局港", "value": "00144"},
-        {"label": "香港电讯", "value": "06823"},
-        {"label": "中国石油", "value": "00386"},
-        {"label": "邮储银行", "value": "01658"},
-        {"label": "辽港股份", "value": "02880"},
-        {"label": "中国银行", "value": "03988"},
-        {"label": "中信证券", "value": "06030"},
-        {"label": "中信银行", "value": "00998"},
-        {"label": "农业银行", "value": "01288"},
-        {"label": "招商银行", "value": "03968"},
-        {"label": "中银香港", "value": "02388"},
-        {"label": "汇丰控股", "value": "00005"},
-        {"label": "建设银行", "value": "00939"},
-        {"label": "工商银行", "value": "01398"}
-    ]
+    from fin_data.profile import get_tickers
+    return get_tickers("HKEX")
 
 @register_widget({
     "name": "港股基本信息",

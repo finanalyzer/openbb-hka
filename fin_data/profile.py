@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import List
 from openbb import obb
 from . import default_provider
 
@@ -39,3 +40,24 @@ def get_historical_prices(
     Get historical prices
     """
     return obb.equity.price.historical(symbol=ticker, start_date=start_date, end_date=end_date, provider=default_provider).to_dataframe()
+
+def get_tickers(exchange: str = "") -> List[dict]:
+    result_df = obb.equity.search(provider="akshare").to_dataframe()
+    if exchange == "HKEX":
+        result_df = result_df[result_df['exchange'] == "HKEX"]
+    else:
+        result_df = result_df[result_df['exchange'] != "HKEX"]
+    if not result_df.empty:
+        equity_list = [
+            {
+                "label": row['name'] if 'name' in result_df.columns else "Unknown Company",
+                "value": row['symbol'] if 'symbol' in result_df.columns else "invalid ticker",
+                "extraInfo": {
+                    "description": row['symbol'] if 'symbol' in result_df.columns else "invalid ticker",
+                    "rightOfDescription": row['exchange'] if 'exchange' in result_df.columns else "invalid"
+                }
+            }
+            for index, row in result_df.iterrows()
+        ]
+        return equity_list
+    return []
