@@ -1,6 +1,6 @@
 [project]
 name = "openbb-hka"
-version = "0.3.2"
+version = "1.0.2"
 description = "Dashboard for your financial data in China and Hong Kong market"
 readme = "README.md"
 requires-python = ">=3.11"

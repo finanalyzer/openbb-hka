@@ -11,7 +11,7 @@ equity_hk_router = APIRouter()
 
 @equity_hk_router.get("/candles")
 @register_widget({
-    "name": "港股k线图",
+    "name": "k线图",
     "description": "港股k线图",
     "category": "Equity",
     "type": "chart",
@@ -21,14 +21,14 @@ equity_hk_router = APIRouter()
         "w": 40,
         "h": 20
     },
-    "source": "AKShare",
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
             "paramName": "ticker",
             "label": "Symbol",
-            "value": "00300.HK",
-            "description": "Stock ticker (e.g., 00300.HK for Hong Kong Stock Exchange)",
+            "value": "00300",
+            "description": "Stock ticker (e.g., 00300 for Hong Kong Stock Exchange)",
             "optionsEndpoint": "hk/tickers"
         },
         {
@@ -63,7 +63,7 @@ equity_hk_router = APIRouter()
             "type": "date",
             "paramName": "end_date",
             "label": "End Date",
-            "value": "2025-09-8",
+            "value": "2025-10-09",
             "description": "End date for historical data"
         }
     ],
@@ -87,7 +87,7 @@ def get_stock_tickers(token: str = Depends(get_current_user)):
     return get_tickers("HKEX")
 
 @register_widget({
-    "name": "港股基本信息",
+    "name": "基本信息",
     "description": "获取港股基本信息",
     "category": "Equity",
     "subcategory": "Company Info",
@@ -107,6 +107,7 @@ def get_stock_tickers(token: str = Depends(get_current_user)):
             ]
         }
     },
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
@@ -133,7 +134,7 @@ def get_key_metrics(
     return key_metrics.to_markdown()
 
 @register_widget({
-    "name": "港股历史股价",
+    "name": "历史股价",
     "description": "Get historical price data for stocks.",
     "category": "Equity",
     "subcategory": "Prices",
@@ -162,12 +163,13 @@ def get_key_metrics(
             ]
         }
     },
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
             "paramName": "ticker",
             "label": "Symbol",
-            "value": "00300.HK",
+            "value": "00300",
             "description": "Stock ticker to get historical prices",
             "optionsEndpoint": "hk/tickers"
         },
@@ -203,7 +205,7 @@ def get_key_metrics(
             "type": "date",
             "paramName": "end_date",
             "label": "End Date",
-            "value": "2025-09-08",
+            "value": "2025-10-09",
             "description": "End date for historical data"
         }
     ]
@@ -223,7 +225,7 @@ def get_prices_hk(
     return stock_prices.reset_index().to_dict(orient="records")
 
 @register_widget({
-    "name": "港股新闻",
+    "name": "新闻",
     "description": "Get recent news articles for stocks, including headlines, publish dates, and article summaries.",
     "category": "Equity",
     "subcategory": "News",
@@ -247,6 +249,7 @@ def get_prices_hk(
             ]
         }
     },
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
@@ -274,7 +277,7 @@ async def get_stock_news(ticker: str = Query(..., description="Stock ticker"),
     return get_news(ticker, limit).to_dict(orient="records")
 
 @register_widget({
-    "name": "港股财务指标",
+    "name": "财务指标",
     "description": "获取港股的财务指标",
     "category": "Equity",
     "subcategory": "Financials",
@@ -290,6 +293,7 @@ async def get_stock_news(ticker: str = Query(..., description="Stock ticker"),
             "showAll": True
         }
     },
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
@@ -316,7 +320,7 @@ def get_financial_data(
     return df_comparison.to_dict(orient="records")
 
 @register_widget({
-    "name": "港股利润表",
+    "name": "利润表",
     "description": "Financial statements that provide information about a company's revenues, expenses, and profits over a specific period.",
     "category": "Equity",
     "subcategory": "Financials",
@@ -348,6 +352,7 @@ def get_financial_data(
             ]
         }
     },
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
@@ -388,7 +393,7 @@ def get_hk_income(ticker: str, period: str, limit: int, token: str = Depends(get
     return income_data.to_dict(orient="records")
 
 @register_widget({
-    "name": "港股资产负债表",
+    "name": "资产负债表",
     "description": "A financial statement that summarizes a company's assets, liabilities and shareholders' equity at a specific point in time.",
     "category": "Equity",
     "subcategory": "Financials",
@@ -420,6 +425,7 @@ def get_hk_income(ticker: str, period: str, limit: int, token: str = Depends(get
             ]
         }
     },
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
@@ -459,7 +465,7 @@ def get_hk_balance(ticker: str, period: str, limit: int, token: str = Depends(ge
     return balance_data.to_dict(orient="records")
 
 @register_widget({
-    "name": "港股现金流量表",
+    "name": "现金流量表",
     "description": "Financial statements that provide information about a company's cash inflows and outflows over a specific period.",
     "category": "Equity",
     "subcategory": "Financials",
@@ -491,6 +497,7 @@ def get_hk_balance(ticker: str, period: str, limit: int, token: str = Depends(ge
             ]
         }
     },
+    "source": "港股",
     "params": [
         {
             "type": "endpoint",
@@ -528,3 +535,61 @@ def get_hk_cash_flow(ticker: str, period: str, limit: int, token: str = Depends(
     cash_data = get_cash_flow(ticker, period, limit)
     cash_data = cash_data.fillna(0)
     return cash_data.to_dict(orient="records")
+
+@register_widget({
+    "name": "当前股价",
+    "description": "Get the current prices.",
+    "category": "Equity",
+    "subcategory": "Prices",
+    "type": "table",
+    "widgetId": "hk/quote",
+    "endpoint": "hk/quote",
+    "gridData": {
+        "w": 40,
+        "h": 8
+    },
+    "data": {
+        "table": {
+            "enableCharts": False,
+            "showAll": False,
+            "columnsDefs": [
+                {"field": "代码", "headerName": "代码", 
+                 "cellDataType": "text",
+                 "width": 80, 
+                 "pinned": "left",
+                 "renderFn": "cellOnClick",
+                 "renderFnParams": {
+                        "actionType": "groupBy",
+                        "groupByParamName": "ticker"
+                    }
+                 },
+                {"field": "名称", "headerName": "名称", "width": 100, "cellDataType": "text"},
+                {"field": "现价", "headerName": "现价", "width": 100, "cellDataType": "number"},
+                {"field": "52周最低", "headerName": "52周最低", "width": 100, "cellDataType": "number"},
+                {"field": "52周最高", "headerName": "52周最高", "width": 100, "cellDataType": "number"},
+                {"field": "成交量", "headerName": "成交量", "width": 100, "cellDataType": "number"},
+                {"field": "股息率(TTM)", "headerName": "股息率(TTM)", "width": 100, "cellDataType": "number"},
+                {"field": "股息(TTM)", "headerName": "股息(TTM)", "width": 100, "cellDataType": "number"}]
+        }
+    },
+    "source": "港股",
+    "params": [
+        {
+            "paramName": "ticker",
+            "description": "Stock ticker to get the current prices.",
+            "value": "01398",
+            "label": "Symbol",
+            "type": "endpoint",
+            "optionsEndpoint": "/hk/tickers",
+            "multiSelect": False,
+            "show": True
+        },
+    ]
+})
+@equity_hk_router.get("/quote")
+def get_hk_quote(
+    token: str = Depends(get_current_user)
+):
+    """Get current stock prices"""
+    from fin_data.profile import get_quote
+    return get_quote("01398,01288,01339,00939,06823,00144,02800,00386,02880,03988,00998")

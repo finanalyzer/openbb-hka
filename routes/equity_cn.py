@@ -12,7 +12,7 @@ from core.auth import get_current_user
 equity_cn_router = APIRouter()
 
 @register_widget({
-    "name": "A股财务指标",
+    "name": "财务指标",
     "description": "获取A股的财务指标",
     "category": "Equity",
     "subcategory": "Financials",
@@ -28,6 +28,7 @@ equity_cn_router = APIRouter()
             "showAll": True
         }
     },
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -54,7 +55,7 @@ def get_financial_data(
     return df_comparison.to_dict(orient="records")
 
 @register_widget({
-    "name": "A股利润表",
+    "name": "利润表",
     "description": "Financial statements that provide information about a company's revenues, expenses, and profits over a specific period.",
     "category": "Equity",
     "subcategory": "Financials",
@@ -86,6 +87,7 @@ def get_financial_data(
             ]
         }
     },
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -126,7 +128,7 @@ def get_cn_income(ticker: str, period: str, limit: int, token: str = Depends(get
     return income_data.to_dict(orient="records")
 
 @register_widget({
-    "name": "A股资产负债表",
+    "name": "资产负债表",
     "description": "A financial statement that summarizes a company's assets, liabilities and shareholders' equity at a specific point in time.",
     "category": "Equity",
     "subcategory": "Financials",
@@ -158,6 +160,7 @@ def get_cn_income(ticker: str, period: str, limit: int, token: str = Depends(get
             ]
         }
     },
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -197,7 +200,7 @@ def get_cn_balance(ticker: str, period: str, limit: int, token: str = Depends(ge
     return balance_data.to_dict(orient="records")
 
 @register_widget({
-    "name": "A股现金流量表",
+    "name": "现金流量表",
     "description": "Financial statements that provide information about a company's cash inflows and outflows over a specific period.",
     "category": "Equity",
     "subcategory": "Financials",
@@ -229,6 +232,7 @@ def get_cn_balance(ticker: str, period: str, limit: int, token: str = Depends(ge
             ]
         }
     },
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -268,7 +272,7 @@ def get_cn_cash_flow(ticker: str, period: str, limit: int, token: str = Depends(
     return cash_data.to_dict(orient="records")
 
 @register_widget({
-    "name": "A股基本信息",
+    "name": "基本信息",
     "description": "Get key company information including name, CIK, market cap, total employees, website URL, and more.",
     "category": "Equity",
     "subcategory": "Company Info",
@@ -288,6 +292,7 @@ def get_cn_cash_flow(ticker: str, period: str, limit: int, token: str = Depends(
             ]
         }
     },
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -335,6 +340,7 @@ def get_cn_key_metrics(
             ]
         }
     },
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -362,7 +368,7 @@ async def get_cn_news(ticker: str = Query(..., description="Stock ticker"),
     return get_news(ticker, limit).to_dict(orient="records")
 
 @register_widget({
-    "name": "A股历史股价",
+    "name": "历史股价",
     "description": "Get historical price data for stocks with customizable intervals and date ranges.",
     "category": "Equity",
     "subcategory": "Prices",
@@ -391,6 +397,7 @@ async def get_cn_news(ticker: str = Query(..., description="Stock ticker"),
             ]
         }
     },
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -432,7 +439,7 @@ async def get_cn_news(ticker: str = Query(..., description="Stock ticker"),
             "type": "date",
             "paramName": "end_date",
             "label": "End Date",
-            "value": "2025-09-08",
+            "value": "2025-10-09",
             "description": "End date for historical data"
         }
     ]
@@ -452,7 +459,7 @@ def get_cn_prices(
     return stock_prices.reset_index().to_dict(orient="records")
 
 @register_widget({
-    "name": "A股k线图",
+    "name": "k线图",
     "description": "股价k线图",
     "category": "Equity",
     "type": "chart",
@@ -462,7 +469,7 @@ def get_cn_prices(
         "w": 40,
         "h": 20
     },
-    "source": "AKShare",
+    "source": "A股",
     "params": [
         {
             "type": "endpoint",
@@ -504,7 +511,7 @@ def get_cn_prices(
             "type": "date",
             "paramName": "end_date",
             "label": "End Date",
-            "value": "2025-09-8",
+            "value": "2025-10-09",
             "description": "End date for historical data"
         }
     ],
@@ -528,3 +535,60 @@ def get_cn_tickers(token: str = Depends(get_current_user)):
     from fin_data.profile import get_tickers
     return get_tickers()
 
+@register_widget({
+    "name": "股价",
+    "description": "Get the current prices.",
+    "category": "Equity",
+    "subcategory": "Prices",
+    "type": "table",
+    "widgetId": "cn/quote",
+    "endpoint": "cn/quote",
+    "gridData": {
+        "w": 40,
+        "h": 8
+    },
+    "data": {
+        "table": {
+            "enableCharts": False,
+            "showAll": False,
+            "columnsDefs": [
+                {"field": "代码", "headerName": "代码", 
+                 "cellDataType": "text",
+                 "width": 80, 
+                 "pinned": "left",
+                 "renderFn": "cellOnClick",
+                 "renderFnParams": {
+                        "actionType": "groupBy",
+                        "groupByParamName": "ticker"
+                    }
+                 },
+                {"field": "名称", "headerName": "名称", "width": 100, "cellDataType": "text"},
+                {"field": "现价", "headerName": "现价", "width": 100, "cellDataType": "number"},
+                {"field": "52周最低", "headerName": "52周最低", "width": 100, "cellDataType": "number"},
+                {"field": "52周最高", "headerName": "52周最高", "width": 100, "cellDataType": "number"},
+                {"field": "成交量", "headerName": "成交量", "width": 100, "cellDataType": "number"},
+                {"field": "股息率(TTM)", "headerName": "股息率(TTM)", "width": 100, "cellDataType": "number"},
+                {"field": "股息(TTM)", "headerName": "股息(TTM)", "width": 100, "cellDataType": "number"}]
+        }
+    },
+    "source": "A股",
+    "params": [
+        {
+            "paramName": "ticker",
+            "description": "Stock ticker to get the current prices.",
+            "value": "600028",
+            "label": "Symbol",
+            "type": "endpoint",
+            "optionsEndpoint": "/cn/tickers",
+            "multiSelect": False,
+            "show": True
+        },
+    ]
+})
+@equity_cn_router.get("/quote")
+def get_cn_quote(
+    token: str = Depends(get_current_user)
+):
+    """Get current stock prices"""
+    from fin_data.profile import get_quote
+    return get_quote("601288,601988,601939,601398,600325,600104,601006,600028")

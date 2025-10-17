@@ -6,6 +6,19 @@
     "description": "A\u80a1\u6570\u636e\u3002",
     "allowCustomization": true,
     "tabs": {
+        "mystock": {
+            "id": "mystock",
+            "name": "\u81ea\u9009\u80a1",
+            "layout": [
+                {
+                    "i": "cn/quote",
+                    "x": 0,
+                    "y": 2,
+                    "w": 40,
+                    "h": 8
+                }
+            ]
+        },
         "overview": {
             "id": "overview",
             "name": "\u7b80\u51b5",
@@ -228,7 +241,8 @@
                 "cn/cash_flow",
                 "cn/income",
                 "cn/financial_data",
-                "cn/candles"
+                "cn/candles",
+                "cn/quote"
             ]
         },
         {

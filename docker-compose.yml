@@ -1,6 +1,6 @@
 services:
   openbb-hka:
-    image: shugaoye/openbb-hka:0.2.4
+    image: shugaoye/openbb-hka:1.0.2
     env_file:
       - .env               # DEBUG=true, API_KEY=12345
     environment:

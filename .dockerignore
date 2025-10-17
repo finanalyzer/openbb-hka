@@ -1,7 +1,84 @@
-.git
-.idx
-.vscode
+.idx/
+.vscode/
 .inscode
+.ruff_cache
 inscode.nix
 devserver.sh
 user_settings.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+.env
+.venv
+env.bak/
+venv.bak/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# Testing
+.coverage
+.pytest_cache/
+.coverage.*
+htmlcov/
+.tox/
+
+# Local config / secrets
+config.local.py
+*.env
+.env.*
+secrets/
+*.key
+*.pem
+
+# Git
+.git
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile*
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+
+# Misc
+README.md
+Makefile
+pyproject.toml  # 仅当不用于构建时可忽略；若用 Poetry 则不要忽略
+uv.lock     # 同上，若用 Poetry 管理依赖则不要忽略
