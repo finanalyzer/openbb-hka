@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from core.registry import register_widget, WIDGETS, add_template, TEMPLATES, load_agent_config
 from core.config import config
 from routes.charts import charts_router
+from routes.tradingview import tradingview_router
 from routes.equity_cn import equity_cn_router
 from routes.equity_hk import equity_hk_router
 from routes.agents import agents_router
@@ -38,6 +39,11 @@ def read_root():
 def health_check():
     """Health check endpoint for monitoring"""
     return {"status": "healthy"}
+
+app.include_router(
+    tradingview_router,
+    prefix="/udf",
+)
 
 app.include_router(
     charts_router,
